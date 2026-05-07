@@ -1,0 +1,7 @@
+.env
+brainboard-web/.env.local
+__pycache__/
+node_modules/
+brainboard-web/node_modules/
+.venv/
+.next/
