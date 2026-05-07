@@ -1,15 +1,23 @@
+from fastapi import FastAPI, Request, Response, BackgroundTasks
 
-
-
-from fastapi import FastAPI, Request, Response
 from supabase import create_client
+
 from openai import OpenAI
+
 from twilio.twiml.messaging_response import MessagingResponse
+
+from twilio.rest import Client as TwilioClient
+
 from dotenv import load_dotenv
+
 import os
+
 import re
+
 import json
+
 import html as html_lib
+
 import requests
 
 load_dotenv()
