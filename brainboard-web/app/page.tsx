@@ -110,11 +110,7 @@ export default function Home() {
     const categories = items.map((item) => item.category).filter(Boolean);
     const sources = items.map((item) => item.source_type).filter(Boolean);
 
-    return [
-      "Unread",
-      "Read",
-      ...Array.from(new Set([...categories, ...sources])),
-    ];
+    return ["Unread", "Read", ...Array.from(new Set([...categories, ...sources]))];
   }, [items]);
 
   const filteredItems = items.filter((item) => {
@@ -156,14 +152,10 @@ export default function Home() {
         <header className="pb-5 pt-3">
           <nav
             className={`mb-6 flex items-center justify-between rounded-2xl border px-5 py-3 backdrop-blur ${
-              dark
-                ? "border-white/10 bg-white/5"
-                : "border-white/70 bg-white/45"
+              dark ? "border-white/10 bg-white/5" : "border-white/70 bg-white/45"
             }`}
           >
-            <div className="text-base font-semibold tracking-tight">
-              Brainboard
-            </div>
+            <div className="text-base font-semibold tracking-tight">Brainboard</div>
 
             <button
               onClick={() => setDark(!dark)}
@@ -293,9 +285,7 @@ export default function Home() {
                               ? "text-slate-400 hover:bg-white/10 hover:text-white"
                               : "text-slate-400 hover:bg-slate-100 hover:text-slate-700"
                           }`}
-                          title={
-                            item.is_read ? "Mark as unread" : "Mark as read"
-                          }
+                          title={item.is_read ? "Mark as unread" : "Mark as read"}
                         >
                           {item.is_read ? (
                             <CheckCircle2 size={17} strokeWidth={2} />
@@ -322,9 +312,7 @@ export default function Home() {
                       {item.title}
                     </h2>
 
-                    <div
-                      className={`mb-6 space-y-3 text-sm leading-6 ${muted}`}
-                    >
+                    <div className={`mb-6 space-y-3 text-sm leading-6 ${muted}`}>
                       {visiblePoints.map((point, index) => (
                         <p key={index} className="flex gap-2">
                           <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#4BA3C7]" />
@@ -346,9 +334,7 @@ export default function Home() {
                               : "text-[#245B72] hover:text-[#10202B]"
                           }`}
                         >
-                          {isExpanded
-                            ? "Show less"
-                            : `Read more +${points.length - 3}`}
+                          {isExpanded ? "Show less" : `Read more +${points.length - 3}`}
                         </button>
                       )}
                     </div>
@@ -389,9 +375,7 @@ export default function Home() {
 
         <footer
           className={`mt-6 border-t py-8 text-center text-xs ${
-            dark
-              ? "border-white/10 text-slate-500"
-              : "border-[#B9DCEB] text-slate-500"
+            dark ? "border-white/10 text-slate-500" : "border-[#B9DCEB] text-slate-500"
           }`}
         >
           Brainboard · Your personal memory layer from WhatsApp.
