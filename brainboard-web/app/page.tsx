@@ -23,7 +23,7 @@ type BrainboardItem = {
 export default function Home() {
   const [items, setItems] = useState<BrainboardItem[]>([]);
   const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState("All");
+  const [filter, setFilter] = useState("Unread");
   const [loading, setLoading] = useState(true);
   const [dark, setDark] = useState(false);
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>(
