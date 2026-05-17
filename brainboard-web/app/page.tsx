@@ -28,6 +28,9 @@ export default function Home() {
   const [filter, setFilter] = useState("All");
   const [loading, setLoading] = useState(true);
   const [dark, setDark] = useState(false);
+  const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>(
+    {}
+  );
 
   async function fetchItems(showLoading = false) {
     if (showLoading) setLoading(true);
@@ -73,7 +76,9 @@ export default function Home() {
     if (error) {
       console.error("Read update error:", error);
       setItems((prev) =>
-        prev.map((x) => (x.id === item.id ? { ...x, is_read: item.is_read } : x))
+        prev.map((x) =>
+          x.id === item.id ? { ...x, is_read: item.is_read } : x
+        )
       );
     }
   }
@@ -107,7 +112,12 @@ export default function Home() {
     const categories = items.map((item) => item.category).filter(Boolean);
     const sources = items.map((item) => item.source_type).filter(Boolean);
 
-    return ["All", "Unread", "Read", ...Array.from(new Set([...categories, ...sources]))];
+    return [
+      "All",
+      "Unread",
+      "Read",
+      ...Array.from(new Set([...categories, ...sources])),
+    ];
   }, [items]);
 
   const filteredItems = items.filter((item) => {
@@ -148,7 +158,9 @@ export default function Home() {
         <header className="pb-5 pt-3">
           <nav
             className={`mb-6 flex items-center justify-between rounded-2xl border px-5 py-3 backdrop-blur ${
-              dark ? "border-white/10 bg-white/5" : "border-white/70 bg-white/45"
+              dark
+                ? "border-white/10 bg-white/5"
+                : "border-white/70 bg-white/45"
             }`}
           >
             <div className="text-base font-semibold tracking-tight">
@@ -244,104 +256,134 @@ export default function Home() {
             </div>
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {filteredItems.map((item) => (
-                <article
-                  key={item.id}
-                  className={`group flex min-h-[340px] flex-col rounded-[2rem] border p-6 backdrop-blur transition duration-200 hover:-translate-y-1 ${
-                    item.is_read ? readCard : card
-                  }`}
-                >
-                  <div className="mb-5 flex items-center justify-between gap-3">
-                    <span
-                      className={`rounded-full px-3 py-1 text-xs font-medium ${
-                        dark
-                          ? "bg-sky-300/10 text-sky-200"
-                          : "bg-[#E6F4FA] text-[#245B72]"
-                      }`}
-                    >
-                      {item.category || "Other"}
-                    </span>
+              {filteredItems.map((item) => {
+                const points = (item.summary || "")
+                  .split("\n")
+                  .filter(Boolean);
 
-                    <div className="flex items-center gap-1">
-                      <button
-                        onClick={() => toggleRead(item)}
-                        className={`flex h-8 w-8 items-center justify-center rounded-full transition ${
-                          item.is_read
-                            ? dark
-                              ? "text-emerald-300 hover:bg-emerald-400/10"
-                              : "text-emerald-700 hover:bg-emerald-50"
-                            : dark
-                            ? "text-slate-400 hover:bg-white/10 hover:text-white"
-                            : "text-slate-400 hover:bg-slate-100 hover:text-slate-700"
-                        }`}
-                        title={item.is_read ? "Mark as unread" : "Mark as read"}
-                      >
-                        {item.is_read ? (
-                          <CheckCircle2 size={17} strokeWidth={2} />
-                        ) : (
-                          <Circle size={17} strokeWidth={2} />
-                        )}
-                      </button>
+                const isExpanded = expandedItems[item.id];
+                const visiblePoints = isExpanded ? points : points.slice(0, 3);
 
-                      <button
-                        onClick={() => deleteItem(item.id)}
-                        className={`flex h-8 w-8 items-center justify-center rounded-full transition ${
+                return (
+                  <article
+                    key={item.id}
+                    className={`group flex min-h-[340px] flex-col rounded-[2rem] border p-6 backdrop-blur transition duration-200 hover:-translate-y-1 ${
+                      item.is_read ? readCard : card
+                    }`}
+                  >
+                    <div className="mb-5 flex items-center justify-between gap-3">
+                      <span
+                        className={`rounded-full px-3 py-1 text-xs font-medium ${
                           dark
-                            ? "text-slate-400 hover:bg-red-500/10 hover:text-red-300"
-                            : "text-slate-400 hover:bg-red-50 hover:text-red-600"
+                            ? "bg-sky-300/10 text-sky-200"
+                            : "bg-[#E6F4FA] text-[#245B72]"
                         }`}
-                        title="Delete"
                       >
-                        <Trash2 size={16} strokeWidth={2} />
-                      </button>
+                        {item.category || "Other"}
+                      </span>
+
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => toggleRead(item)}
+                          className={`flex h-8 w-8 items-center justify-center rounded-full transition ${
+                            item.is_read
+                              ? dark
+                                ? "text-emerald-300 hover:bg-emerald-400/10"
+                                : "text-emerald-700 hover:bg-emerald-50"
+                              : dark
+                              ? "text-slate-400 hover:bg-white/10 hover:text-white"
+                              : "text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+                          }`}
+                          title={
+                            item.is_read ? "Mark as unread" : "Mark as read"
+                          }
+                        >
+                          {item.is_read ? (
+                            <CheckCircle2 size={17} strokeWidth={2} />
+                          ) : (
+                            <Circle size={17} strokeWidth={2} />
+                          )}
+                        </button>
+
+                        <button
+                          onClick={() => deleteItem(item.id)}
+                          className={`flex h-8 w-8 items-center justify-center rounded-full transition ${
+                            dark
+                              ? "text-slate-400 hover:bg-red-500/10 hover:text-red-300"
+                              : "text-slate-400 hover:bg-red-50 hover:text-red-600"
+                          }`}
+                          title="Delete"
+                        >
+                          <Trash2 size={16} strokeWidth={2} />
+                        </button>
+                      </div>
                     </div>
-                  </div>
 
-                  <h2 className="mb-4 text-xl font-semibold leading-snug tracking-[-0.02em]">
-                    {item.title}
-                  </h2>
+                    <h2 className="mb-4 text-xl font-semibold leading-snug tracking-[-0.02em]">
+                      {item.title}
+                    </h2>
 
-                  <div className={`mb-6 space-y-3 text-sm leading-6 ${muted}`}>
-                    {(item.summary || "")
-                      .split("\n")
-                      .filter(Boolean)
-                      .map((point, index) => (
+                    <div
+                      className={`mb-6 space-y-3 text-sm leading-6 ${muted}`}
+                    >
+                      {visiblePoints.map((point, index) => (
                         <p key={index} className="flex gap-2">
                           <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#4BA3C7]" />
                           <span>{point.replace(/^•\s*/, "")}</span>
                         </p>
                       ))}
-                  </div>
 
-                  <div
-                    className={`mt-auto flex items-center justify-between border-t pt-5 ${
-                      dark ? "border-white/10" : "border-[#D7EAF2]"
-                    }`}
-                  >
-                    <span className={`text-xs ${muted}`}>
-                      {item.is_read ? "Read" : "Unread"}
-                    </span>
+                      {points.length > 3 && (
+                        <button
+                          onClick={() =>
+                            setExpandedItems((prev) => ({
+                              ...prev,
+                              [item.id]: !isExpanded,
+                            }))
+                          }
+                          className={`mt-2 text-sm font-medium transition ${
+                            dark
+                              ? "text-sky-300 hover:text-sky-200"
+                              : "text-[#245B72] hover:text-[#10202B]"
+                          }`}
+                        >
+                          {isExpanded
+                            ? "Show less"
+                            : `Read more +${points.length - 3}`}
+                        </button>
+                      )}
+                    </div>
 
-                    {item.url ? (
-                      <a
-                        href={item.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={() => markAsRead(item)}
-                        className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-                          dark
-                            ? "bg-sky-300 text-black hover:bg-sky-200"
-                            : "bg-[#10202B] text-white hover:bg-[#245B72]"
-                        }`}
-                      >
-                        Open Link
-                      </a>
-                    ) : (
-                      <span className={`text-sm ${muted}`}>Saved note</span>
-                    )}
-                  </div>
-                </article>
-              ))}
+                    <div
+                      className={`mt-auto flex items-center justify-between border-t pt-5 ${
+                        dark ? "border-white/10" : "border-[#D7EAF2]"
+                      }`}
+                    >
+                      <span className={`text-xs ${muted}`}>
+                        {item.is_read ? "Read" : "Unread"}
+                      </span>
+
+                      {item.url ? (
+                        <a
+                          href={item.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => markAsRead(item)}
+                          className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+                            dark
+                              ? "bg-sky-300 text-black hover:bg-sky-200"
+                              : "bg-[#10202B] text-white hover:bg-[#245B72]"
+                          }`}
+                        >
+                          Open Link
+                        </a>
+                      ) : (
+                        <span className={`text-sm ${muted}`}>Saved note</span>
+                      )}
+                    </div>
+                  </article>
+                );
+              })}
             </div>
           )}
         </section>
