@@ -367,19 +367,18 @@ export default function Home() {
                       </span>
 
                       {item.url ? (
-                        <a
-                          href={item.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={() => markAsRead(item)}
-                          className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-                            dark
-                              ? "bg-sky-300 text-black hover:bg-sky-200"
-                              : "bg-[#10202B] text-white hover:bg-[#245B72]"
-                          }`}
-                        >
-                          Open Link
-                        </a>
+                   <a
+                   href={item.url}
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+                     dark
+                       ? "bg-sky-300 text-black hover:bg-sky-200"
+                       : "bg-[#10202B] text-white hover:bg-[#245B72]"
+                   }`}
+                 >
+                   Open Link
+                 </a>
                       ) : (
                         <span className={`text-sm ${muted}`}>Saved note</span>
                       )}
