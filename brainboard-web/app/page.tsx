@@ -155,7 +155,9 @@ export default function Home() {
               dark ? "border-white/10 bg-white/5" : "border-white/70 bg-white/45"
             }`}
           >
-            <div className="text-base font-semibold tracking-tight">Brainboard</div>
+            <div className="text-base font-semibold tracking-tight">
+              Brainboard
+            </div>
 
             <button
               onClick={() => setDark(!dark)}
@@ -245,7 +247,7 @@ export default function Home() {
               </p>
             </div>
           ) : (
-            <div className="grid auto-rows-fr gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid items-start gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {filteredItems.map((item) => {
                 const points = (item.summary || "")
                   .split("\n")
@@ -257,11 +259,11 @@ export default function Home() {
 
                 return (
                   <article
-                  key={item.id}
-                  className={`group flex flex-col rounded-[2rem] border p-6 backdrop-blur transition-all duration-300 hover:-translate-y-1 ${
-                    isExpanded ? "min-h-[380px] h-auto" : "h-[380px]"
-                  } ${item.is_read ? readCard : card}`}
-                >
+                    key={item.id}
+                    className={`group flex flex-col rounded-[2rem] border p-6 backdrop-blur transition-all duration-300 hover:-translate-y-1 ${
+                      isExpanded ? "min-h-[380px] h-auto" : "h-[380px]"
+                    } ${item.is_read ? readCard : card}`}
+                  >
                     <div className="mb-5 flex items-center justify-between gap-3">
                       <span
                         className={`rounded-full px-3 py-1 text-xs font-medium ${
@@ -308,14 +310,14 @@ export default function Home() {
                       </div>
                     </div>
 
-                    <h2 className="mb-4 text-xl font-semibold leading-snug tracking-[-0.02em]">
+                    <h2 className="mb-4 line-clamp-2 text-xl font-semibold leading-snug tracking-[-0.02em]">
                       {item.title}
                     </h2>
 
                     <div
-                  className={`mb-6 max-h-[150px] space-y-3 text-sm leading-6 ${muted} ${
-               isExpanded ? "" : "max-h-[150px] overflow-hidden"
-                   }`}
+                      className={`mb-6 space-y-3 text-sm leading-6 ${muted} ${
+                        isExpanded ? "" : "max-h-[150px] overflow-hidden"
+                      }`}
                     >
                       {visiblePoints.map((point, index) => (
                         <p key={index} className="flex gap-2">
@@ -338,7 +340,9 @@ export default function Home() {
                               : "text-[#245B72] hover:text-[#10202B]"
                           }`}
                         >
-                          {isExpanded ? "Show less" : `Read more +${points.length - 3}`}
+                          {isExpanded
+                            ? "Show less"
+                            : `Read more +${points.length - 3}`}
                         </button>
                       )}
                     </div>
@@ -379,7 +383,9 @@ export default function Home() {
 
         <footer
           className={`mt-6 border-t py-8 text-center text-xs ${
-            dark ? "border-white/10 text-slate-500" : "border-[#B9DCEB] text-slate-500"
+            dark
+              ? "border-white/10 text-slate-500"
+              : "border-[#B9DCEB] text-slate-500"
           }`}
         >
           Brainboard · Your personal memory layer from WhatsApp.
