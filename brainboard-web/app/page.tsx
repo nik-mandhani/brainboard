@@ -324,38 +324,38 @@ export default function Home() {
                       {item.title}
                     </h2>
 
-                    <div
-                      className={`mb-6 space-y-3 text-sm leading-6 ${muted} ${
-                        isExpanded ? "" : "max-h-[150px] overflow-hidden"
-                      }`}
-                    >
-                      {visiblePoints.map((point, index) => (
-                        <p key={index} className="flex gap-2">
-                          <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#4BA3C7]" />
-                          <span>{point.replace(/^[-•]\s*/, "")}</span>
-                        </p>
-                      ))}
+                    <div className="mb-6">
+  <div
+    className={`space-y-3 text-sm leading-6 ${muted} ${
+      isExpanded ? "" : "max-h-[150px] overflow-hidden"
+    }`}
+  >
+    {visiblePoints.map((point, index) => (
+      <p key={index} className="flex gap-2">
+        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#4BA3C7]" />
+        <span>{point.replace(/^[-•]\s*/, "")}</span>
+      </p>
+    ))}
+  </div>
 
-                      {points.length > 3 && (
-                        <button
-                          onClick={() =>
-                            setExpandedItems((prev) => ({
-                              ...prev,
-                              [item.id]: !isExpanded,
-                            }))
-                          }
-                          className={`pt-1 text-sm font-medium transition ${
-                            dark
-                              ? "text-sky-300 hover:text-sky-200"
-                              : "text-[#245B72] hover:text-[#10202B]"
-                          }`}
-                        >
-                          {isExpanded
-                            ? "Show less"
-                            : `Read more +${points.length - 3}`}
-                        </button>
-                      )}
-                    </div>
+  {points.length > 3 && (
+    <button
+      onClick={() =>
+        setExpandedItems((prev) => ({
+          ...prev,
+          [item.id]: !isExpanded,
+        }))
+      }
+      className={`mt-3 text-sm font-medium transition ${
+        dark
+          ? "text-sky-300 hover:text-sky-200"
+          : "text-[#245B72] hover:text-[#10202B]"
+      }`}
+    >
+      {isExpanded ? "Show less" : `Read more +${points.length - 3}`}
+    </button>
+  )}
+</div>
 
                     <div
                       className={`mt-auto flex items-center justify-between border-t pt-5 ${
