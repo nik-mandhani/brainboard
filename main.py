@@ -256,6 +256,7 @@ The user may send:
 1. Only a text note
 2. Only a link
 3. A text note + a relevant link
+4. A todo list / checklist / action items
 
 You must combine:
 - the user's own note
@@ -274,7 +275,7 @@ Detected URL:
 Scraped content from URL:
 {scraped_text}
 
-Instructions:
+Important rules:
 - If the user gave both a note and a link, combine both.
 - The user's note is important context. Do not ignore it.
 - If link content is available, summarize the actual content of the link.
@@ -286,9 +287,20 @@ Instructions:
 - Avoid generic lines like "This article discusses..."
 - Return only valid JSON.
 
+Important todo rule:
+- If the message contains todos, tasks, checklist items, numbered lists, or action points, preserve every distinct todo.
+- If the user sends 6 todos, return 6 bullet points.
+- If the user sends 10 todos, return 10 bullet points.
+- Do not compress multiple todos into only 3 points.
+- Clean and rewrite each todo, but do not drop any.
+- Only merge todos if they are clearly duplicates.
+- For todos, category should be "Todo".
+- For todos, source_type should be "text".
+- For todos, source_name should be "Brainboard Note".
+
 Create:
 1. A short, clear title
-2. A useful summary in 3 to 5 bullet points
+2. A useful summary in bullet points
 3. The user's context or reason for saving, if clear
 4. A category
 5. Source type
@@ -296,7 +308,7 @@ Create:
 7. Suggested tags
 
 Allowed categories:
-Business, AI, Finance, Product, Growth, Startup, Hiring, Marketing, Personal Idea, Research, Other
+Business, AI, Finance, Product, Growth, Startup, Hiring, Marketing, Personal Idea, Research, Todo, Other
 
 Allowed source_type:
 text, website, article, company_website, twitter, linkedin, instagram, youtube, medium_article, substack_article, techcrunch_article, ycombinator
@@ -306,15 +318,15 @@ Return JSON in this exact format:
 {{
   "title": "short useful title",
   "summary": [
-    "bullet point 1",
-    "bullet point 2",
-    "bullet point 3"
+    "one bullet per important note, insight, or todo",
+    "preserve all todos from the user",
+    "do not compress multiple todos into one unless they are duplicates"
   ],
   "user_context": "why the user saved this, if clear",
-  "category": "Startup",
-  "source_type": "linkedin",
-  "source_name": "LinkedIn",
-  "tags": ["tag1", "tag2", "tag3"]
+  "category": "Todo",
+  "source_type": "text",
+  "source_name": "Brainboard Note",
+  "tags": ["todo", "startup", "operations"]
 }}
 """
 
