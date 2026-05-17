@@ -249,10 +249,20 @@ export default function Home() {
           ) : (
             <div className="grid items-start gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {filteredItems.map((item) => {
-                const points = (item.summary || "")
-                  .split("\n")
-                  .map((p) => p.trim())
-                  .filter(Boolean);
+                const summaryPoints = (item.summary || "")
+                .split("\n")
+                .map((p) => p.trim())
+                .filter(Boolean);
+              
+              const originalPoints = (item.original_message || "")
+                .split(/\n|(?=\d+\.)|(?=- )|(?=• )/)
+                .map((p) => p.trim())
+                .filter(Boolean);
+              
+              const points =
+                originalPoints.length > summaryPoints.length
+                  ? originalPoints
+                  : summaryPoints;
 
                 const isExpanded = expandedItems[item.id] === true;
                 const visiblePoints = isExpanded ? points : points.slice(0, 3);
