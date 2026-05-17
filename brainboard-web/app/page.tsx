@@ -245,7 +245,7 @@ export default function Home() {
               </p>
             </div>
           ) : (
-            <div className="grid items-start gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid auto-rows-fr gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {filteredItems.map((item) => {
                 const points = (item.summary || "")
                   .split("\n")
