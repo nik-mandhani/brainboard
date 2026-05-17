@@ -1,14 +1,13 @@
-"use client";
+Replace your full page.tsx with this. Main change: All now shows only unread items.
 
+"use client";
 import { useEffect, useMemo, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { CheckCircle2, Circle, Trash2 } from "lucide-react";
-
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
-
 type BrainboardItem = {
   id: string;
   title: string;
@@ -21,7 +20,6 @@ type BrainboardItem = {
   created_at: string;
   is_read: boolean;
 };
-
 export default function Home() {
   const [items, setItems] = useState<BrainboardItem[]>([]);
   const [search, setSearch] = useState("");
@@ -31,28 +29,22 @@ export default function Home() {
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>(
     {}
   );
-
   async function fetchItems(showLoading = false) {
     if (showLoading) setLoading(true);
-
     const { data, error } = await supabase
       .from("brainboard_items")
       .select("*")
       .order("created_at", { ascending: false });
-
     if (!error) setItems(data || []);
     if (showLoading) setLoading(false);
   }
-
   async function deleteItem(id: string) {
     const confirmDelete = window.confirm("Delete this item?");
     if (!confirmDelete) return;
-
     const { error } = await supabase
       .from("brainboard_items")
       .delete()
       .eq("id", id);
-
     if (!error) {
       setItems((prev) => prev.filter((item) => item.id !== id));
     } else {
@@ -60,19 +52,15 @@ export default function Home() {
       alert("Could not delete item");
     }
   }
-
   async function toggleRead(item: BrainboardItem) {
     const newValue = !item.is_read;
-
     setItems((prev) =>
       prev.map((x) => (x.id === item.id ? { ...x, is_read: newValue } : x))
     );
-
     const { error } = await supabase
       .from("brainboard_items")
       .update({ is_read: newValue })
       .eq("id", item.id);
-
     if (error) {
       console.error("Read update error:", error);
       setItems((prev) =>
@@ -82,36 +70,27 @@ export default function Home() {
       );
     }
   }
-
   async function markAsRead(item: BrainboardItem) {
     if (item.is_read) return;
-
     setItems((prev) =>
       prev.map((x) => (x.id === item.id ? { ...x, is_read: true } : x))
     );
-
     const { error } = await supabase
       .from("brainboard_items")
       .update({ is_read: true })
       .eq("id", item.id);
-
     if (error) console.error("Mark read error:", error);
   }
-
   useEffect(() => {
     fetchItems(true);
-
     const timer = setInterval(() => {
       fetchItems(false);
     }, 5000);
-
     return () => clearInterval(timer);
   }, []);
-
   const filters = useMemo(() => {
     const categories = items.map((item) => item.category).filter(Boolean);
     const sources = items.map((item) => item.source_type).filter(Boolean);
-
     return [
       "All",
       "Unread",
@@ -119,39 +98,33 @@ export default function Home() {
       ...Array.from(new Set([...categories, ...sources])),
     ];
   }, [items]);
-
   const filteredItems = items.filter((item) => {
     const q = search.toLowerCase();
-
     const matchesSearch =
       item.title?.toLowerCase().includes(q) ||
       item.summary?.toLowerCase().includes(q) ||
       item.original_message?.toLowerCase().includes(q);
-
     const matchesFilter =
-      filter === "All" ||
+      (filter === "All" && !item.is_read) ||
       (filter === "Unread" && !item.is_read) ||
       (filter === "Read" && item.is_read) ||
-      item.category === filter ||
-      item.source_type === filter;
-
+      (filter !== "All" &&
+        filter !== "Unread" &&
+        filter !== "Read" &&
+        !item.is_read &&
+        (item.category === filter || item.source_type === filter));
     return matchesSearch && matchesFilter;
   });
-
   const bg = dark
     ? "bg-[#071018] text-white"
     : "bg-gradient-to-br from-[#EBF6FB] via-[#DFF2FA] to-[#F8FCFF] text-[#10202B]";
-
   const card = dark
     ? "bg-[#101B24]/90 border-white/10"
     : "bg-white/85 border-[#B9DCEB]/70 shadow-[0_18px_50px_rgba(36,99,130,0.12)]";
-
   const readCard = dark
     ? "bg-[#0B1218]/95 border-white/5 opacity-70"
     : "bg-[#D8EAF2]/90 border-[#AACFDD] opacity-75";
-
   const muted = dark ? "text-slate-400" : "text-slate-500";
-
   return (
     <main className={`min-h-screen ${bg}`}>
       <div className="mx-auto flex min-h-screen max-w-7xl flex-col px-4 py-6 sm:px-8 lg:px-12">
@@ -166,7 +139,6 @@ export default function Home() {
             <div className="text-base font-semibold tracking-tight">
               Brainboard
             </div>
-
             <button
               onClick={() => setDark(!dark)}
               className={`rounded-full border px-4 py-2 text-sm transition ${
@@ -178,18 +150,15 @@ export default function Home() {
               {dark ? "Light" : "Dark"}
             </button>
           </nav>
-
           <div className="max-w-2xl">
             <h1 className="text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">
               Save your ideas
             </h1>
-
             <p className={`mt-3 text-sm leading-6 ${muted}`}>
               Links, tweets, notes and thoughts organized beautifully.
             </p>
           </div>
         </header>
-
         <section
           className={`sticky top-0 z-10 -mx-4 border-y px-4 py-5 backdrop-blur-xl sm:-mx-8 sm:px-8 lg:-mx-12 lg:px-12 ${
             dark
@@ -202,7 +171,6 @@ export default function Home() {
               <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
                 ⌕
               </span>
-
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -214,7 +182,6 @@ export default function Home() {
                 }`}
               />
             </div>
-
             <div className="flex gap-2 overflow-x-auto pb-1">
               {filters.map((f) => (
                 <button
@@ -236,7 +203,6 @@ export default function Home() {
             </div>
           </div>
         </section>
-
         <section className="flex-1 py-8">
           {loading ? (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -255,19 +221,18 @@ export default function Home() {
               </p>
             </div>
           ) : (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid items-start gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {filteredItems.map((item) => {
                 const points = (item.summary || "")
                   .split("\n")
+                  .map((p) => p.trim())
                   .filter(Boolean);
-
-                const isExpanded = expandedItems[item.id];
+                const isExpanded = expandedItems[item.id] === true;
                 const visiblePoints = isExpanded ? points : points.slice(0, 3);
-
                 return (
                   <article
                     key={item.id}
-                    className={`group flex min-h-[340px] flex-col rounded-[2rem] border p-6 backdrop-blur transition duration-200 hover:-translate-y-1 ${
+                    className={`group flex flex-col rounded-[2rem] border p-6 backdrop-blur transition duration-200 hover:-translate-y-1 ${
                       item.is_read ? readCard : card
                     }`}
                   >
@@ -281,7 +246,6 @@ export default function Home() {
                       >
                         {item.category || "Other"}
                       </span>
-
                       <div className="flex items-center gap-1">
                         <button
                           onClick={() => toggleRead(item)}
@@ -304,7 +268,6 @@ export default function Home() {
                             <Circle size={17} strokeWidth={2} />
                           )}
                         </button>
-
                         <button
                           onClick={() => deleteItem(item.id)}
                           className={`flex h-8 w-8 items-center justify-center rounded-full transition ${
@@ -318,21 +281,18 @@ export default function Home() {
                         </button>
                       </div>
                     </div>
-
                     <h2 className="mb-4 text-xl font-semibold leading-snug tracking-[-0.02em]">
                       {item.title}
                     </h2>
-
                     <div
                       className={`mb-6 space-y-3 text-sm leading-6 ${muted}`}
                     >
                       {visiblePoints.map((point, index) => (
                         <p key={index} className="flex gap-2">
                           <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#4BA3C7]" />
-                          <span>{point.replace(/^•\s*/, "")}</span>
+                          <span>{point.replace(/^[-•]\s*/, "")}</span>
                         </p>
                       ))}
-
                       {points.length > 3 && (
                         <button
                           onClick={() =>
@@ -341,7 +301,7 @@ export default function Home() {
                               [item.id]: !isExpanded,
                             }))
                           }
-                          className={`mt-2 text-sm font-medium transition ${
+                          className={`pt-1 text-sm font-medium transition ${
                             dark
                               ? "text-sky-300 hover:text-sky-200"
                               : "text-[#245B72] hover:text-[#10202B]"
@@ -353,7 +313,6 @@ export default function Home() {
                         </button>
                       )}
                     </div>
-
                     <div
                       className={`mt-auto flex items-center justify-between border-t pt-5 ${
                         dark ? "border-white/10" : "border-[#D7EAF2]"
@@ -362,7 +321,6 @@ export default function Home() {
                       <span className={`text-xs ${muted}`}>
                         {item.is_read ? "Read" : "Unread"}
                       </span>
-
                       {item.url ? (
                         <a
                           href={item.url}
@@ -387,7 +345,6 @@ export default function Home() {
             </div>
           )}
         </section>
-
         <footer
           className={`mt-6 border-t py-8 text-center text-xs ${
             dark
