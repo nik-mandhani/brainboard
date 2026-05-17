@@ -258,7 +258,7 @@ export default function Home() {
                 return (
                   <article
                     key={item.id}
-                    className={`group flex flex-col rounded-[2rem] border p-6 backdrop-blur transition duration-200 hover:-translate-y-1 ${
+                    className={`group flex h-[380px] flex-col rounded-[2rem] border p-6 backdrop-blur transition duration-200 hover:-translate-y-1 ${
                       item.is_read ? readCard : card
                     }`}
                   >
@@ -312,7 +312,7 @@ export default function Home() {
                       {item.title}
                     </h2>
 
-                    <div className={`mb-6 space-y-3 text-sm leading-6 ${muted}`}>
+                    <div className={`mb-6 max-h-[150px] overflow-y-auto pr-2 space-y-3 text-sm leading-6 ${muted}`}>
                       {visiblePoints.map((point, index) => (
                         <p key={index} className="flex gap-2">
                           <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#4BA3C7]" />
